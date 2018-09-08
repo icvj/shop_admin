@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="form" :model="form" label-width="80px" :rules='rules' status-icon>
-      <img src="../../assets/avatar.jpg" alt="">
+      <img src="../assets/avatar.jpg" alt="">
       <el-form-item label="账户" prop='username'>
         <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
       </el-form-item>
@@ -53,11 +53,12 @@ export default {
             console.log(res.data)
             if (res.data.meta.status === 200) {
               this.$message({
-                message: '恭喜你，这是一条成功消息',
+                message: '登录成功',
                 type: 'success',
                 duration: 1000
               })
 
+              localStorage.setItem('token', res.data.data.token)
               this.$router.push('home')
             } else {
               this.$message.error('用户名或者密码错误')
