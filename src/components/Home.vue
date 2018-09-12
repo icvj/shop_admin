@@ -13,36 +13,20 @@
     <el-container>
       <el-aside width="200px">
         <el-menu
-          default-active="1-1"
+          :default-active="$route.path"
           class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
           router>
-          <el-submenu index="1">
+          <el-submenu v-for="submenu in menuList" :key="submenu.id" :index="submenu.path">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{submenu.authName}}</span>
             </template>
-            <el-menu-item index="/users">
+            <el-menu-item v-for="item in submenu.children" :key="item.id" :index="'/' + item.path">
               <i class="el-icon-menu"></i>
-              用户列表
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="2-1">
-              <i class="el-icon-menu"></i>
-              <span slot="title">角色列表</span>
-            </el-menu-item>
-            <el-menu-item index="2-2">
-              <i class="el-icon-menu"></i>
-              <span slot="title">权限列表</span>
+              {{item.authName}}
             </el-menu-item>
           </el-submenu>
         </el-menu>
@@ -56,6 +40,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      menuList: []
+    }
+  },
   methods: {
     logout() {
       this.$confirm('退出登录?', '提示', {
@@ -77,12 +66,14 @@ export default {
             message: '已取消'
           })
         })
-    },
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
+    }
+  },
+  async created() {
+    let res = await this.axios.get('menus')
+    console.log(res)
+    let {data, meta: {status}} = res.data
+    if (status === 200) {
+      this.menuList = data
     }
   }
 }

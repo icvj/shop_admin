@@ -16,6 +16,11 @@
       stripe
       style="width: 100%">
       <el-table-column
+        type="index"
+        width="50"
+        :index="indexMethod">
+      </el-table-column>
+      <el-table-column
         prop="username"
         label="姓名"
         width="200">
@@ -54,6 +59,7 @@
     </el-table>
     <!-- 分页器 -->
     <el-pagination
+      background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="current"
@@ -147,6 +153,9 @@ export default {
     }
   },
   methods: {
+    indexMethod(index) {
+      return index
+    },
     getList() {
       this.axios({
         url: 'users',
