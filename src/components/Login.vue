@@ -40,7 +40,6 @@ export default {
   },
   methods: {
     onSubmit () {
-      console.log('submit!')
       this.$refs.form.validate(valid => {
         if (!valid) {
           return false
@@ -50,7 +49,7 @@ export default {
             method: 'post',
             data: this.form
           }).then(res => {
-            console.log(res.data)
+            // console.log(res.data)
             if (res.data.meta.status === 200) {
               this.$message({
                 message: '登录成功',

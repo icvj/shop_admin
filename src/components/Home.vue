@@ -70,7 +70,7 @@ export default {
   },
   async created() {
     let res = await this.axios.get('menus')
-    console.log(res)
+    // console.log(res)
     let {data, meta: {status}} = res.data
     if (status === 200) {
       this.menuList = data

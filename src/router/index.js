@@ -2,9 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
-import Users from '@/components/Users'
+import Users from '@/components/users/Users'
 import Rights from '@/components/rights/Rights'
 import Roles from '@/components/rights/Roles'
+import Categories from '@/components/products/Categories'
 Vue.use(Router)
 
 let router = new Router({
@@ -35,6 +36,10 @@ let router = new Router({
         {
           path: '/roles',
           component: Roles
+        },
+        {
+          path: '/categories',
+          component: Categories
         }
       ]
     }
@@ -42,7 +47,7 @@ let router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log(to)
+  // console.log(to)
   if (to.path === '/login' || localStorage.getItem('token')) {
     next()
   } else {
