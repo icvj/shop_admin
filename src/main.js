@@ -5,6 +5,13 @@ import App from './App'
 import router from './router'
 import '@/assets/common.css'
 import axios from 'axios'
+import moment from 'moment'
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(VueQuillEditor)
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -29,4 +36,8 @@ new Vue({
   el: '#app',
   router,
   render: h => h(App)
+})
+
+Vue.filter('dateFilter', (input, format = 'YYYY-MM-DD HH:mm:ss') => {
+  return moment(input).format(format)
 })

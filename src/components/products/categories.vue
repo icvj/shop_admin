@@ -5,7 +5,10 @@
     <el-table
       :data="cateList"
       stripe
-      style="width: 100%">
+      style="width: 100%"
+      v-loading="loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading">
       <el-table-tree-column
         label="分类名称"
         prop="cat_name"
@@ -54,14 +57,14 @@
       :visible.sync="addDialogVisible"
       width="40%">
       <el-form :model="addForm" :rules="rules" status-icon ref="addForm" label-width="100px" class="addForm">
-        <el-form-item label="父级分类">
+        <el-form-item label="父级分类" prop="selectedOptions">
           <el-cascader
             ref="cas"
             :options="options"
             change-on-select
             :props="props"
-            v-model="selectedOptions"
-          ></el-cascader>
+            v-model="addForm.selectedOptions">
+          </el-cascader>
         </el-form-item>
         <el-form-item label="分类名称" prop="cateName">
           <el-input v-model="addForm.cateName"></el-input>
@@ -87,7 +90,8 @@ export default {
       total: 0,
       addDialogVisible: false,
       addForm: {
-        cateName: ''
+        cateName: '',
+        selectedOptions: []
       },
       options: [],
       props: {
@@ -96,11 +100,13 @@ export default {
       },
       rules: {
         cateName: [{ required: true, message: '请输入', trigger: 'blur' }]
-      }
+      },
+      loading: true
     }
   },
   methods: {
     async getCateList() {
+      this.loading = true
       let res = await this.axios.get('categories', {
         params: {
           type: 3,
@@ -113,6 +119,9 @@ export default {
         this.cateList = result
         this.total = total
       }
+      setTimeout(() => {
+        this.loading = false
+      }, 500)
     },
     handleSizeChange(val) {
       this.current = 1
@@ -133,8 +142,45 @@ export default {
       }
     },
     addCate() {
-      console.log(this.$refs.cas.value)
-      console.log(this.selectedOptions)
+      console.log(this.addForm.selectedOptions)
+      this.$refs.addForm.validate(async valid => {
+        if (!valid) return false
+        let { selectedOptions, cateName } = this.addForm
+        let res = await this.axios.post('categories', {
+          cat_pid: selectedOptions[selectedOptions.length - 1] || 0,
+          cat_name: cateName,
+          cat_level: selectedOptions.length
+        })
+        let { meta: { status } } = res.data
+        if (status === 201) {
+          this.$message.success('success')
+          this.addDialogVisible = false
+          this.getCateList()
+          this.$refs.addForm.resetFields()
+        } else {
+          this.$message.error('fail')
+        }
+      })
+    },
+    async del(row) {
+      try {
+        await this.$confirm('确定要删除？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+
+        let res = await this.axios.delete(`categories/${row.cat_id}`)
+        let { meta: { status, msg } } = res.data
+        if (status === 200) {
+          this.getCateList()
+          this.$message.success('删除成功')
+        } else {
+          this.$message.error(msg)
+        }
+      } catch (error) {
+        console.log('jt', error)
+      }
     }
   },
   async created() {

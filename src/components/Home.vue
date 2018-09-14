@@ -13,7 +13,7 @@
     <el-container>
       <el-aside width="200px">
         <el-menu
-          :default-active="$route.path"
+          :default-active="$route.path.split('-')[0]"
           class="el-menu-vertical-demo"
           background-color="#545c64"
           text-color="#fff"
@@ -71,7 +71,7 @@ export default {
   async created() {
     let res = await this.axios.get('menus')
     // console.log(res)
-    let {data, meta: {status}} = res.data
+    let { data, meta: { status } } = res.data
     if (status === 200) {
       this.menuList = data
     }
